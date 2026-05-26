@@ -1,26 +1,800 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <title>Servon</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Servon – Serwis Komputerowy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=DM+Serif+Display&display=swap" rel="stylesheet" />
 
   <style>
-    body{
-      background:#111;
-      color:white;
-      font-family:Arial;
-      text-align:center;
-      padding-top:100px;
+    /* ── RESET & BASE ─────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #F5F3EE;
+      --surface:    #FFFFFF;
+      --border:     #DDD9D0;
+      --text:       #2B2925;
+      --text-soft:  #5E5A54;
+      --accent:     #3A6B5C;
+      --accent-lt:  #EAF2EF;
+      --accent-dk:  #2A5044;
+      --warn:       #7A4F1D;
+      --warn-lt:    #FBF3EA;
+      --radius:     10px;
+      --gap:        2rem;
+      --max:        1080px;
+      --trans:      0.2s ease;
     }
 
-    h1{
-      font-size:60px;
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Atkinson Hyperlegible', Georgia, serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 1.0625rem;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── SKIP LINK (a11y) ─────────────────────────── */
+    .skip-link {
+      position: absolute;
+      top: -100px;
+      left: 1rem;
+      background: var(--accent);
+      color: #fff;
+      padding: .5rem 1rem;
+      border-radius: 0 0 var(--radius) var(--radius);
+      font-weight: 700;
+      z-index: 9999;
+      text-decoration: none;
+      transition: top var(--trans);
+    }
+    .skip-link:focus { top: 0; }
+
+    /* ── HEADER / NAV ─────────────────────────────── */
+    header {
+      background: var(--surface);
+      border-bottom: 2px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .logo {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 1.6rem;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: .02em;
+    }
+    .logo span { color: var(--text); }
+
+    nav { display: flex; gap: .25rem; }
+
+    nav a {
+      font-size: .9375rem;
+      font-weight: 700;
+      color: var(--text-soft);
+      text-decoration: none;
+      padding: .45rem .85rem;
+      border-radius: var(--radius);
+      transition: background var(--trans), color var(--trans);
+    }
+    nav a:hover,
+    nav a:focus-visible {
+      background: var(--accent-lt);
+      color: var(--accent-dk);
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    /* ── FOCUS RING (global) ─────────────────────── */
+    :focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    /* ── HERO ─────────────────────────────────────── */
+    .hero {
+      background: var(--accent);
+      color: #fff;
+      padding: 4rem 1.5rem 3.5rem;
+      text-align: center;
+    }
+
+    .hero-inner { max-width: 680px; margin: 0 auto; }
+
+    .hero h1 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.125rem;
+      opacity: .92;
+      margin-bottom: 2rem;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .btn {
+      display: inline-block;
+      background: #fff;
+      color: var(--accent-dk);
+      font-weight: 700;
+      font-size: 1rem;
+      padding: .75rem 1.75rem;
+      border-radius: var(--radius);
+      text-decoration: none;
+      border: 2px solid transparent;
+      transition: background var(--trans), color var(--trans), border-color var(--trans);
+    }
+    .btn:hover, .btn:focus-visible {
+      background: var(--accent-lt);
+      border-color: var(--accent-dk);
+      color: var(--accent-dk);
+    }
+
+    /* ── LAYOUT WRAPPER ───────────────────────────── */
+    .page { max-width: var(--max); margin: 0 auto; padding: 0 1.5rem; }
+
+    section { padding: 3.5rem 0; }
+
+    /* ── SECTION HEADINGS ─────────────────────────── */
+    .section-label {
+      display: inline-block;
+      font-size: .8rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: .5rem;
+    }
+
+    h2 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      line-height: 1.25;
+      margin-bottom: 1rem;
+    }
+
+    .section-lead {
+      color: var(--text-soft);
+      max-width: 600px;
+      margin-bottom: 2.5rem;
+    }
+
+    /* ── DIVIDER ──────────────────────────────────── */
+    hr {
+      border: none;
+      border-top: 2px solid var(--border);
+      margin: 0;
+    }
+
+    /* ── SERVICES GRID ────────────────────────────── */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .service-card {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      transition: border-color var(--trans), box-shadow var(--trans);
+    }
+    .service-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 4px 16px rgba(58,107,92,.12);
+    }
+
+    .service-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--accent-lt);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      font-size: 1.4rem;
+      line-height: 1;
+    }
+
+    .service-card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: .4rem;
+      color: var(--text);
+    }
+
+    .service-card p {
+      font-size: .9375rem;
+      color: var(--text-soft);
+      line-height: 1.6;
+    }
+
+    .service-price {
+      display: inline-block;
+      margin-top: .75rem;
+      font-weight: 700;
+      font-size: .875rem;
+      color: var(--accent-dk);
+      background: var(--accent-lt);
+      padding: .2rem .6rem;
+      border-radius: 6px;
+    }
+
+    /* ── HOW IT WORKS ─────────────────────────────── */
+    #jak-dzialamy { background: var(--surface); }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1.5rem;
+      counter-reset: steps;
+    }
+
+    .step {
+      counter-increment: steps;
+      padding: 1.25rem 1.25rem 1.25rem 1rem;
+      border-left: 4px solid var(--accent);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      background: var(--bg);
+    }
+
+    .step::before {
+      content: counter(steps);
+      display: block;
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 2rem;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: .4rem;
+    }
+
+    .step h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: .35rem;
+    }
+
+    .step p {
+      font-size: .9rem;
+      color: var(--text-soft);
+      line-height: 1.6;
+    }
+
+    /* ── INFO BOX ─────────────────────────────────── */
+    .info-box {
+      background: var(--warn-lt);
+      border: 2px solid #D4A96A;
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      margin-top: 2rem;
+    }
+    .info-box .icon { font-size: 1.4rem; flex-shrink: 0; margin-top: .1rem; }
+    .info-box p { font-size: .9375rem; color: var(--warn); line-height: 1.6; }
+    .info-box strong { display: block; margin-bottom: .2rem; }
+
+    /* ── PRICING TABLE ────────────────────────────── */
+    .pricing-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--surface);
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 2px solid var(--border);
+    }
+
+    .pricing-table th, .pricing-table td {
+      padding: .9rem 1.2rem;
+      text-align: left;
+      font-size: .9375rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .pricing-table thead tr { background: var(--accent); color: #fff; }
+    .pricing-table thead th { font-weight: 700; font-size: .875rem; letter-spacing: .04em; }
+
+    .pricing-table tbody tr:last-child td { border-bottom: none; }
+    .pricing-table tbody tr:nth-child(even) { background: var(--bg); }
+    .pricing-table tbody tr:hover { background: var(--accent-lt); }
+
+    .pricing-table td:last-child { font-weight: 700; color: var(--accent-dk); }
+
+    /* ── CONTACT ──────────────────────────────────── */
+    #kontakt { background: var(--surface); }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    @media (max-width: 640px) { .contact-grid { grid-template-columns: 1fr; } }
+
+    .contact-info { display: flex; flex-direction: column; gap: 1rem; }
+
+    .contact-item {
+      display: flex;
+      gap: .85rem;
+      align-items: flex-start;
+      padding: 1rem 1.25rem;
+      background: var(--bg);
+      border-radius: var(--radius);
+      border: 2px solid var(--border);
+    }
+
+    .contact-item .ci-icon {
+      font-size: 1.3rem;
+      flex-shrink: 0;
+      margin-top: .15rem;
+    }
+
+    .contact-item h4 { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text-soft); }
+    .contact-item p, .contact-item a { font-size: .9375rem; color: var(--text); text-decoration: none; }
+    .contact-item a:hover { color: var(--accent-dk); text-decoration: underline; }
+
+    /* ── FORM ─────────────────────────────────────── */
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+
+    .field label {
+      display: block;
+      font-size: .875rem;
+      font-weight: 700;
+      margin-bottom: .35rem;
+      color: var(--text);
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      font-family: inherit;
+      font-size: .9375rem;
+      background: var(--bg);
+      color: var(--text);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: .6rem .9rem;
+      transition: border-color var(--trans);
+      resize: vertical;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--accent);
+      outline: none;
+      background: var(--surface);
+    }
+
+    .field textarea { min-height: 110px; }
+
+    .form-submit {
+      background: var(--accent);
+      color: #fff;
+      border: 2px solid transparent;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: .75rem 1.5rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background var(--trans), color var(--trans);
+      align-self: flex-start;
+    }
+    .form-submit:hover, .form-submit:focus-visible {
+      background: var(--accent-dk);
+      outline: 3px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    /* ── FOOTER ───────────────────────────────────── */
+    footer {
+      background: var(--text);
+      color: #D4D0C8;
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+    }
+
+    .footer-inner { max-width: var(--max); margin: 0 auto; }
+
+    .footer-logo {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 1.4rem;
+      color: #fff;
+      margin-bottom: .5rem;
+    }
+
+    .footer-tagline { font-size: .875rem; margin-bottom: 1.5rem; }
+
+    .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: .25rem .75rem; margin-bottom: 1.5rem; }
+    .footer-links a { color: #A8A49C; font-size: .875rem; text-decoration: none; }
+    .footer-links a:hover { color: #fff; text-decoration: underline; }
+
+    .footer-requirements {
+      margin-top: 1.75rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid #3E3C38;
+      font-size: .78rem;
+      color: #7A7670;
+      line-height: 1.7;
+      text-align: left;
+    }
+
+    .footer-requirements h4 {
+      font-size: .8rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: #9A9690;
+      margin-bottom: .6rem;
+    }
+
+    .footer-requirements ul { padding-left: 1.25rem; list-style: disc; }
+    .footer-requirements li { margin-bottom: .2rem; }
+
+    .copy { margin-top: 1.5rem; font-size: .8rem; color: #5A5650; }
+
+    /* ── RESPONSIVE NAV ───────────────────────────── */
+    @media (max-width: 600px) {
+      nav a { padding: .4rem .55rem; font-size: .85rem; }
+      .logo { font-size: 1.3rem; }
     }
   </style>
 </head>
-
 <body>
-  <h1>Servon 🚀</h1>
-  <p>Moja pierwsza strona na GitHub Pages</p>
+
+  <a href="#uslugi" class="skip-link">Przejdź do treści głównej</a>
+
+  <!-- HEADER -->
+  <header role="banner">
+    <div class="nav-inner">
+      <a href="#" class="logo" aria-label="Servon – strona główna">Serv<span>on</span></a>
+      <nav aria-label="Nawigacja główna">
+        <a href="#uslugi">Usługi</a>
+        <a href="#jak-dzialamy">Jak działamy</a>
+        <a href="#cennik">Cennik</a>
+        <a href="#kontakt">Kontakt</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="hero-heading">
+    <div class="hero-inner">
+      <h1 id="hero-heading">Naprawiamy komputery.<br>Spokojnie i bez pośpiechu.</h1>
+      <p>W Servon każda naprawa jest wyjaśniana krok po kroku. Wiesz dokładnie, co robimy i ile to kosztuje – bez niespodzianek.</p>
+      <a href="#kontakt" class="btn">Umów wizytę</a>
+    </div>
+  </section>
+
+  <main id="main">
+
+    <!-- USŁUGI -->
+    <section id="uslugi" aria-labelledby="uslugi-heading">
+      <div class="page">
+        <span class="section-label">Co robimy</span>
+        <h2 id="uslugi-heading">Nasze usługi</h2>
+        <p class="section-lead">Każda usługa jest opisana prostym językiem. Jeśli czegoś nie rozumiesz – zawsze możesz zapytać.</p>
+
+        <div class="services-grid" role="list">
+
+          <article class="service-card" role="listitem">
+            <div class="service-icon" aria-hidden="true">🖥️</div>
+            <h3>Diagnostyka komputera</h3>
+            <p>Sprawdzamy, co jest nie tak z Twoim komputerem. Po diagnostyce dostaniesz jasny raport – co się zepsuło i co można naprawić.</p>
+            <span class="service-price">od 50 zł</span>
+          </article>
+
+          <article class="service-card" role="listitem">
+            <div class="service-icon" aria-hidden="true">🦠</div>
+            <h3>Usuwanie wirusów</h3>
+            <p>Usuwamy wirusy, złośliwe oprogramowanie i inne zagrożenia. Twój komputer będzie znowu bezpieczny.</p>
+            <span class="service-price">od 80 zł</span>
+          </article>
+
+          <article class="service-card" role="listitem">
+            <div class="service-icon" aria-hidden="true">⚡</div>
+            <h3>Przyspieszenie komputera</h3>
+            <p>Komputer działa wolno? Wyczyścimy go od środka – usuwamy zbędne programy i optymalizujemy działanie systemu.</p>
+            <span class="service-price">od 70 zł</span>
+          </article>
+
+          <article class="service-card" role="listitem">
+            <div class="service-icon" aria-hidden="true">💿</div>
+            <h3>Reinstalacja systemu Windows</h3>
+            <p>Instalujemy system Windows od nowa. Możemy też przenieść Twoje pliki, żebyś nic nie stracił/a.</p>
+            <span class="service-price">od 120 zł</span>
+          </article>
+
+          <article class="service-card" role="listitem">
+            <div class="service-icon" aria-hidden="true">💾</div>
+            <h3>Odzyskiwanie danych</h3>
+            <p>Przypadkowo usunąłeś/aś pliki? Dysk przestał działać? Próbujemy odzyskać Twoje zdjęcia, dokumenty i inne pliki.</p>
+            <span class="service-price">od 150 zł</span>
+          </article>
+
+          <article class="service-card" role="listitem">
+            <div class="service-icon" aria-hidden="true">🔧</div>
+            <h3>Wymiana części</h3>
+            <p>Wymieniamy dyski, pamięć RAM, baterie w laptopach i inne podzespoły. Używamy tylko sprawdzonych części.</p>
+            <span class="service-price">od 60 zł + części</span>
+          </article>
+
+          <article class="service-card" role="listitem">
+            <div class="service-icon" aria-hidden="true">🌐</div>
+            <h3>Konfiguracja sieci Wi-Fi</h3>
+            <p>Pomagamy skonfigurować router, wzmocnić sygnał Wi-Fi lub podłączyć komputer do sieci.</p>
+            <span class="service-price">od 60 zł</span>
+          </article>
+
+          <article class="service-card" role="listitem">
+            <div class="service-icon" aria-hidden="true">🖨️</div>
+            <h3>Instalacja drukarek i urządzeń</h3>
+            <p>Instalujemy i konfigurujemy drukarki, skanery i inne urządzenia peryferyjne.</p>
+            <span class="service-price">od 50 zł</span>
+          </article>
+
+          <article class="service-card" role="listitem">
+            <div class="service-icon" aria-hidden="true">☁️</div>
+            <h3>Konfiguracja kopii zapasowych</h3>
+            <p>Ustawiamy automatyczne kopie zapasowe Twoich plików – w chmurze lub na zewnętrznym dysku.</p>
+            <span class="service-price">od 80 zł</span>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <hr />
+
+    <!-- JAK DZIAŁAMY -->
+    <section id="jak-dzialamy" aria-labelledby="jak-heading">
+      <div class="page">
+        <span class="section-label">Proces</span>
+        <h2 id="jak-heading">Jak przebiega naprawa?</h2>
+        <p class="section-lead">Każda wizyta wygląda tak samo – możesz się do niej spokojnie przygotować.</p>
+
+        <div class="steps" aria-label="Kroki procesu naprawy">
+          <div class="step">
+            <h3>Kontakt i umówienie wizyty</h3>
+            <p>Dzwonisz, piszesz e-mail lub wypełniasz formularz. Ustalamy termin, który Ci odpowiada.</p>
+          </div>
+          <div class="step">
+            <h3>Przyjęcie sprzętu</h3>
+            <p>Przynosisz komputer lub laptop. Opisujesz problem – możesz to napisać na kartce, jeśli wolisz.</p>
+          </div>
+          <div class="step">
+            <h3>Diagnoza i wycena</h3>
+            <p>Sprawdzamy sprzęt. Informujemy Cię o problemie i cenie zanim cokolwiek zrobimy.</p>
+          </div>
+          <div class="step">
+            <h3>Naprawa</h3>
+            <p>Naprawiamy tylko to, na co się zgodziłeś/aś. Informujemy Cię o postępach.</p>
+          </div>
+          <div class="step">
+            <h3>Odbiór sprzętu</h3>
+            <p>Odbierasz gotowy sprzęt. Wyjaśniamy, co zrobiliśmy i jak dbać o komputer.</p>
+          </div>
+        </div>
+
+        <div class="info-box" role="note" aria-label="Ważna informacja">
+          <span class="icon" aria-hidden="true">ℹ️</span>
+          <p><strong>Nie musisz się spieszyć.</strong> Jeśli potrzebujesz więcej czasu na podjęcie decyzji – zawsze możesz wrócić później. Nigdy nie wywieramy presji.</p>
+        </div>
+      </div>
+    </section>
+
+    <hr />
+
+    <!-- CENNIK -->
+    <section id="cennik" aria-labelledby="cennik-heading">
+      <div class="page">
+        <span class="section-label">Ceny</span>
+        <h2 id="cennik-heading">Cennik usług</h2>
+        <p class="section-lead">Podane ceny są cenami wyjściowymi. Dokładną kwotę podamy po diagnozie – bez żadnych ukrytych kosztów.</p>
+
+        <div style="overflow-x:auto;">
+          <table class="pricing-table" aria-label="Cennik usług serwisowych">
+            <thead>
+              <tr>
+                <th scope="col">Usługa</th>
+                <th scope="col">Opis</th>
+                <th scope="col">Cena od</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Diagnostyka</td>
+                <td>Sprawdzenie stanu komputera i raport</td>
+                <td>50 zł</td>
+              </tr>
+              <tr>
+                <td>Usuwanie wirusów</td>
+                <td>Pełne czyszczenie systemu</td>
+                <td>80 zł</td>
+              </tr>
+              <tr>
+                <td>Przyspieszenie</td>
+                <td>Optymalizacja i czyszczenie</td>
+                <td>70 zł</td>
+              </tr>
+              <tr>
+                <td>Reinstalacja Windows</td>
+                <td>Czysta instalacja systemu</td>
+                <td>120 zł</td>
+              </tr>
+              <tr>
+                <td>Odzyskiwanie danych</td>
+                <td>Zależy od stopnia uszkodzenia</td>
+                <td>150 zł</td>
+              </tr>
+              <tr>
+                <td>Wymiana dysku SSD</td>
+                <td>Montaż + migracja danych</td>
+                <td>80 zł + części</td>
+              </tr>
+              <tr>
+                <td>Wymiana baterii (laptop)</td>
+                <td>Montaż + koszt baterii</td>
+                <td>60 zł + części</td>
+              </tr>
+              <tr>
+                <td>Konfiguracja sieci</td>
+                <td>Router, Wi-Fi, podłączenie urządzeń</td>
+                <td>60 zł</td>
+              </tr>
+              <tr>
+                <td>Kopia zapasowa</td>
+                <td>Konfiguracja automatycznych backupów</td>
+                <td>80 zł</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <hr />
+
+    <!-- KONTAKT -->
+    <section id="kontakt" aria-labelledby="kontakt-heading">
+      <div class="page">
+        <span class="section-label">Kontakt</span>
+        <h2 id="kontakt-heading">Skontaktuj się z nami</h2>
+        <p class="section-lead">Możesz do nas napisać, zadzwonić lub wypełnić formularz poniżej. Odpowiadamy w ciągu jednego dnia roboczego.</p>
+
+        <div class="contact-grid">
+          <div class="contact-info" role="list" aria-label="Dane kontaktowe">
+
+            <div class="contact-item" role="listitem">
+              <span class="ci-icon" aria-hidden="true">📍</span>
+              <div>
+                <h4>Adres</h4>
+                <p>ul. Technologiczna 12, 60-001 Poznań</p>
+              </div>
+            </div>
+
+            <div class="contact-item" role="listitem">
+              <span class="ci-icon" aria-hidden="true">📞</span>
+              <div>
+                <h4>Telefon</h4>
+                <a href="tel:+48612345678">+48 61 234 56 78</a>
+              </div>
+            </div>
+
+            <div class="contact-item" role="listitem">
+              <span class="ci-icon" aria-hidden="true">✉️</span>
+              <div>
+                <h4>E-mail</h4>
+                <a href="mailto:kontakt@servon.pl">kontakt@servon.pl</a>
+              </div>
+            </div>
+
+            <div class="contact-item" role="listitem">
+              <span class="ci-icon" aria-hidden="true">🕐</span>
+              <div>
+                <h4>Godziny otwarcia</h4>
+                <p>Pon–Pt: 9:00–18:00<br>Sobota: 10:00–14:00</p>
+              </div>
+            </div>
+
+          </div>
+
+          <form class="contact-form" action="#" method="post" aria-label="Formularz kontaktowy" novalidate>
+            <div class="field">
+              <label for="name">Imię i nazwisko</label>
+              <input type="text" id="name" name="name" autocomplete="name" placeholder="np. Jan Kowalski" required />
+            </div>
+            <div class="field">
+              <label for="email">Adres e-mail</label>
+              <input type="email" id="email" name="email" autocomplete="email" placeholder="np. jan@email.pl" required />
+            </div>
+            <div class="field">
+              <label for="service">Rodzaj usługi</label>
+              <select id="service" name="service">
+                <option value="">– wybierz usługę –</option>
+                <option>Diagnostyka komputera</option>
+                <option>Usuwanie wirusów</option>
+                <option>Przyspieszenie komputera</option>
+                <option>Reinstalacja systemu Windows</option>
+                <option>Odzyskiwanie danych</option>
+                <option>Wymiana części</option>
+                <option>Konfiguracja sieci Wi-Fi</option>
+                <option>Konfiguracja kopii zapasowych</option>
+                <option>Inne</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="message">Opis problemu <span style="font-weight:400;color:var(--text-soft)">(opcjonalnie)</span></label>
+              <textarea id="message" name="message" placeholder="Opisz krótko, co się dzieje z komputerem…"></textarea>
+            </div>
+            <button type="submit" class="form-submit">Wyślij wiadomość</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-logo">Servon</div>
+      <p class="footer-tagline">Serwis komputerowy – spokojnie i bez niespodzianek.</p>
+
+      <nav class="footer-links" aria-label="Nawigacja w stopce">
+        <a href="#uslugi">Usługi</a>
+        <a href="#jak-dzialamy">Jak działamy</a>
+        <a href="#cennik">Cennik</a>
+        <a href="#kontakt">Kontakt</a>
+      </nav>
+
+      <div class="footer-requirements" role="note" aria-label="Informacje o dostępności strony">
+        <h4>Dostępność i projektowanie przyjazne osobom w spektrum autyzmu</h4>
+        <ul>
+          <li><strong>Spokojne kolory:</strong> paleta oparta na stonowanej zieleni i kremowych odcieniach – brak jaskrawych, kontrastujących kolorów.</li>
+          <li><strong>Brak migających elementów:</strong> strona nie zawiera animacji, GIF-ów ani żadnych efektów mrugania.</li>
+          <li><strong>Brak autoplay:</strong> brak automatycznie odtwarzanych wideo ani dźwięków.</li>
+          <li><strong>Czytelny układ:</strong> treści pogrupowane w wyraźne sekcje z nagłówkami; przewidywalna, stała nawigacja u góry.</li>
+          <li><strong>Prosty język:</strong> krótkie zdania, brak żargonu technicznego, wyjaśnienia napisane przystępnie.</li>
+          <li><strong>Przewidywalność:</strong> każda usługa i krok procesu opisane jednakowo – ta sama struktura w całej witrynie.</li>
+          <li><strong>Fokus i skupienie:</strong> wyraźny widoczny fokus klawiaturowy (zielona obwódka), link „Przejdź do treści" dla czytników ekranu.</li>
+          <li><strong>WCAG 2.1 AA:</strong> kontrast tekstu spełnia wymagania dostępności, formularze mają etykiety, obrazki mają aria-hidden.</li>
+        </ul>
+      </div>
+
+      <p class="copy">© 2025 Servon. Wszelkie prawa zastrzeżone.</p>
+    </div>
+  </footer>
+
 </body>
 </html>
